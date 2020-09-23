@@ -7,7 +7,6 @@ async function example(){
       await driver.get('https://www.google.com');
       await driver.findElement(By.name('q')).sendKeys('Selenium Tutorial');
    } finally {
-      await driver.quit()
    }
 }
 
