@@ -2,10 +2,9 @@ import tweepy
 import configparser
 
 config = configparser.ConfigParser()
-config.read("./credentials/config.txt")
+config.read("./credentials/config.ini")
 consumer_key = config.get("TwitterAPI", "consumer_key")
 consumer_secret = config.get("TwitterAPI", "consumer_secret")
-
 
 try:
    auth = tweepy.OAuthHandler(consumer_key, consumer_secret)
