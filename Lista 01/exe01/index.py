@@ -1,15 +1,10 @@
+from connection import connectToTwitterAPI
 import tweepy
-import configparser
-
-config = configparser.ConfigParser()
-config.read("./credentials/config.ini")
-consumer_key = config.get("TwitterAPI", "consumer_key")
-consumer_secret = config.get("TwitterAPI", "consumer_secret")
 
 try:
-   auth = tweepy.OAuthHandler(consumer_key, consumer_secret)
-   api = tweepy.API(auth)
-   for tweet in tweepy.Cursor(api.search, q='Hello World').items(10):
+   api = connectToTwitterAPI()
+   tweetsList = tweepy.Cursor(api.search, q = "qualquer texto").items(10)
+   for tweet in tweetsList:
       print(tweet.text)
 except tweepy.TweepError:
    print('Problema na conexão com a API')
