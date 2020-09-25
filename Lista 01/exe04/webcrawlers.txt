@@ -1,0 +1,11 @@
+Exemplos de Web Crawlers:
+    - Google Bot
+    - Amazon Bot
+    - Bing Bot
+    - Slurp Bot (Yahoo)
+    - DuckDuck Bot
+    - Baidu Spider
+    - Yandex Bot
+    - Sogou Spider
+    - Exabot
+    - Facebook External Hit
