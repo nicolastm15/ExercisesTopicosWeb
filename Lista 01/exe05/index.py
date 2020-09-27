@@ -2,30 +2,42 @@ import csv
 from selenium import webdriver
 from bs4 import BeautifulSoup as bs
 
-driver = webdriver.Firefox()
-records = []
-# URL pra pesquisar no google
-url = 'https://www.google.com/search?q=covid-19&lr=lang_pt&tbs=cdr:1,cd_min:2/13/2020,cd_max:3/18/2020'
+def extract_url(search_term, lang_code, min_date, max_date):
+    search_term = search_term.replace(' ', '+')
+    url_template = 'https://www.google.com/search?q={}&lr=lang_{}&tbs=cdr:1,cd_min:{},cd_max:{}'
+    return url_template.format(search_term,lang_code, min_date, max_date)
 
-driver.get(url)
-soup = bs(driver.page_source, 'html.parser')
-result_list = soup.find('div', {'id': 'rso'}).findChildren(recursive=False)
+def extract_record(item):
+    if (type(item) != 'NoneType'):
+        return (item.h3.span.text, item.a.get('href'))
 
-def extract_records():
-    first_result = result_list[0]
-    second_result = result_list[1]
-
-    records.append((first_result.h3.span.text, first_result.a.get('href')))
-    records.append((second_result.h3.span.text, second_result.a.get('href')))
-
+def create_records_list(result_list):
+    records = []
+    for result in result_list:
+        record = extract_record(result)
+        if record:
+            records.append(record)
     return records
 
+def create_file(file_name, records):
+    with open(file_name + '.csv', 'w', newline='', encoding='utf-8') as f:
+        writer = csv.writer(f)
+        writer.writerow(['Result Title', 'Result Link'])
+        writer.writerows(records)
 
-extract_records()
+def main(search_term, lang_code, min_date, max_date, file_name):
+    driver = webdriver.Firefox()
+    records = []
+    
+    url = extract_url(search_term, lang_code, min_date, max_date)
+    driver.get(url)
+    soup = bs(driver.page_source, 'html.parser')
+    result_list = soup.find('div', {'id': 'rso'}).findChildren(
+        'div', recursive=False)
 
-driver.close()
+    records = create_records_list(result_list)
 
-with open('searchResults.csv', 'w', newline='', encoding='utf-8') as f:
-    writer = csv.writer(f)
-    writer.writerow(['Result Title', 'Result Link'])
-    writer.writerows(records)
+    driver.close()
+
+    create_file(file_name, records)
+
